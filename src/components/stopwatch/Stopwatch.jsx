@@ -6,7 +6,7 @@ const Stopwatch = () => {
   const [time, setTime] = useState(0);
 
   // state to check stopwatch running or not
-  const [isRunning, setIsRunning] = useState(false);
+  const [isRunning, setIsRunning] = useState(true);
 
   useEffect(() => {
     let intervalId;
