@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import Stopwatch from "./components/stopwatch/Stopwatch";
 
@@ -46,40 +46,63 @@ const questionsAnswers = [
 ];
 
 function App() {
-  const [showStopwatch, setShowStopwatch] = useState(false);
-  const [index, setIndex] = useState(0);
+  const [correctAnswersCounter, setCorrectAnswersCounter] = useState(0);
+  const [showQuestions, setshowQuestions] = useState(false); //starta i štopericu
+  const [index, setIndex] = useState(
+    Math.floor(Math.random() * (10 - 1 + 1)) + 1
+  );
+  const [usedIndex, setUsedIndex] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState("");
+  const [currentAnswer, setCurrentAnswer] = useState("");
 
-  const [userAnswer, setUserAnswer] = useState();
+  const [userAnswer, setUserAnswer] = useState("");
+  const [answerLabelText, setAnswerLabelText] = useState("");
 
   const onStartQuiz = () => {
-    setShowStopwatch(true);
-    
-  };
-  // console.log(questionsAnswers);
-
-  const nextQuestionHandler = () => {
+    setshowQuestions(true);
+    setCurrentQuestion(questionsAnswers[index].question);
+    setCurrentAnswer(questionsAnswers[index].answer);
     setIndex(Math.floor(Math.random() * (10 - 1 + 1)) + 1);
   };
 
-  const currentAnswer = questionsAnswers[index].answer;
-    console.log(currentAnswer);
+  const onConfirmAnswer = (event) => {
+    console.log("odgovor", userAnswer);
+    console.log("točan odgovor", currentAnswer);
 
-  const onConfirmAnswer = event => {
-    event.preventDefault();
-    setUserAnswer(event.target.value);
-    console.log(userAnswer)
-  }
+    if (userAnswer == currentAnswer) {
+      setAnswerLabelText("Odgovor je točan!");
+      setIndex(Math.floor(Math.random() * (10 - 1 + 1)) + 1);
+      setUsedIndex(usedIndex => [...usedIndex, index]);
+      setCorrectAnswersCounter(correctAnswersCounter + 1);
+      setCurrentQuestion(questionsAnswers[index].question);
+      setCurrentAnswer(questionsAnswers[index].answer);
+      
+    } else {
+      setAnswerLabelText("Odgovor je netočan!Pokušaj ponovo!");
+    }
+
+    setUserAnswer("");
+  };
+  console.log(answerLabelText);
+  console.log(correctAnswersCounter);
+  console.log(usedIndex);
+
+  useEffect(() => {
+    console.log(userAnswer);
+    console.log(currentAnswer);
+  }, [userAnswer, currentAnswer]);
 
   return (
     <>
-      {showStopwatch && <Stopwatch />}
       <button onClick={onStartQuiz}>Play</button>
-      <h2>Quiz:</h2>
-      <button onClick={nextQuestionHandler}>Next question</button>
-      <p>What is the sum: {questionsAnswers[index].question} ?</p>
+      {showQuestions && (
+        <>
+          <Stopwatch />
+          <h2>Quiz:</h2>
+          <p>Izračunaj zbroj ova dva broja: {currentQuestion}</p>
 
-      {/* ispis kompletnog niza */}
-      {/* {questionsAnswers.map((questionAnswer,index) => {
+          {/* ispis kompletnog niza */}
+          {/* {questionsAnswers.map((questionAnswer,index) => {
         return (
           <div key={index}>
             <p>{questionAnswer.question} "= ?"</p>
@@ -89,19 +112,23 @@ function App() {
       }  
       )}  */}
 
-      <form>
-        <label htmlFor="fname">Your answer:</label>
-        <input
-          type="text"
-          id="answer"
-          name="answer"
-          placeholder="upiši cijeli broj"
-          value={userAnswer}
-          onChange={onConfirmAnswer} 
-        />
-      </form>
-      <button onClick={onConfirmAnswer}>Confirm</button>
-      </>
+          <form>
+            <label htmlFor="fname">Your answer:</label>
+            <input
+              type="number"
+              id="answer"
+              name="answer"
+              placeholder="upiši cijeli broj"
+              value={userAnswer}
+              onChange={(e) => setUserAnswer(e.target.value)}
+            />
+          </form>
+          <button onClick={onConfirmAnswer}>Confirm</button>
+          <p>{answerLabelText} </p>
+        </>
+      )}
+      ;
+    </>
   );
 }
 
