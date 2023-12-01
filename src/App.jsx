@@ -65,7 +65,7 @@ function App() {
     setIndex(Math.floor(Math.random() * (10 - 1 + 1)) + 1);
   };
 
-  const onConfirmAnswer = (event) => {
+    const onConfirmAnswer = (event) => {
     console.log("odgovor", userAnswer);
     console.log("točan odgovor", currentAnswer);
 
@@ -73,6 +73,20 @@ function App() {
       setAnswerLabelText("Odgovor je točan!");
       setIndex(Math.floor(Math.random() * (10 - 1 + 1)) + 1);
       setUsedIndex(usedIndex => [...usedIndex, index]);
+      
+      
+      // for(let i=0; i<usedIndex.length; i++) {
+      //   if (index === usedIndex[i]) {
+      //       setIndex(Math.floor(Math.random() * (10 - 1 + 1)) + 1);
+      //       console.log("brojevi su isti")
+      //       break;
+      //   } else
+      //   {
+      //     console.log("brojevi nisu isti");
+      //   }
+
+      // }  
+
       setCorrectAnswersCounter(correctAnswersCounter + 1);
       setCurrentQuestion(questionsAnswers[index].question);
       setCurrentAnswer(questionsAnswers[index].answer);
@@ -86,6 +100,7 @@ function App() {
   console.log(answerLabelText);
   console.log(correctAnswersCounter);
   console.log(usedIndex);
+  
 
   useEffect(() => {
     console.log(userAnswer);
@@ -124,10 +139,10 @@ function App() {
             />
           </form>
           <button onClick={onConfirmAnswer}>Confirm</button>
-          <p>{answerLabelText} </p>
+          <p>{answerLabelText}</p>
         </>
-      )}
-      ;
+      )
+      }
     </>
   );
 }
