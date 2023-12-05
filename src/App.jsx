@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, } from "react";
 import "./App.css";
 import Stopwatch from "./components/stopwatch/Stopwatch";
 
@@ -46,66 +46,66 @@ const questionsAnswers = [
 ];
 
 function App() {
+  const generateRandomNumber = Math.floor(Math.random() * 10); 
+
   const [correctAnswersCounter, setCorrectAnswersCounter] = useState(0);
-  const [showQuestions, setshowQuestions] = useState(false); //starta i štopericu
-  const [index, setIndex] = useState(
-    Math.floor(Math.random() * (10 - 1 + 1)) + 1
-  );
+  const [showQuestions, setShowQuestions] = useState(false); //starta i štopericu
+  const [index, setIndex] = useState(generateRandomNumber);
   const [usedIndex, setUsedIndex] = useState([]);
-  const [currentQuestion, setCurrentQuestion] = useState("");
-  const [currentAnswer, setCurrentAnswer] = useState("");
+  const [currentQuestion, setCurrentQuestion] = useState(
+    questionsAnswers[index].question
+  );
+  const [currentAnswer, setCurrentAnswer] = useState(
+    questionsAnswers[index].answer
+  );
 
   const [userAnswer, setUserAnswer] = useState("");
   const [answerLabelText, setAnswerLabelText] = useState("");
 
-  const onStartQuiz = () => {
-    setshowQuestions(true);
+  useEffect(() => {
+    console.log("here")
+    console.log("useEffect, index", index);
+    console.log("useEffect, currentQuestion", currentQuestion);
+    console.log(currentAnswer);
     setCurrentQuestion(questionsAnswers[index].question);
     setCurrentAnswer(questionsAnswers[index].answer);
-    setIndex(Math.floor(Math.random() * (10 - 1 + 1)) + 1);
+
+    for (let i = 0; i < usedIndex.length; i++) {
+      if (index === usedIndex[i]) {
+        setIndex(generateRandomNumber);
+        break;
+      }
+    }
+  }, [currentQuestion, index, usedIndex]);
+
+  const onStartQuiz = () => {
+    setShowQuestions(true);
+    console.log(index, currentQuestion, currentAnswer);
   };
 
-    const onConfirmAnswer = (event) => {
+  const onConfirmAnswer = (event) => {
     console.log("odgovor", userAnswer);
     console.log("točan odgovor", currentAnswer);
+    console.log(index);
 
     if (userAnswer == currentAnswer) {
       setAnswerLabelText("Odgovor je točan!");
-      setIndex(Math.floor(Math.random() * (10 - 1 + 1)) + 1);
-      setUsedIndex(usedIndex => [...usedIndex, index]);
-      
-      
-      // for(let i=0; i<usedIndex.length; i++) {
-      //   if (index === usedIndex[i]) {
-      //       setIndex(Math.floor(Math.random() * (10 - 1 + 1)) + 1);
-      //       console.log("brojevi su isti")
-      //       break;
-      //   } else
-      //   {
-      //     console.log("brojevi nisu isti");
-      //   }
-
-      // }  
-
+      setUsedIndex((usedIndex) => [...usedIndex, index]);
       setCorrectAnswersCounter(correctAnswersCounter + 1);
-      setCurrentQuestion(questionsAnswers[index].question);
-      setCurrentAnswer(questionsAnswers[index].answer);
-      
     } else {
       setAnswerLabelText("Odgovor je netočan!Pokušaj ponovo!");
     }
 
     setUserAnswer("");
-  };
-  console.log(answerLabelText);
-  console.log(correctAnswersCounter);
-  console.log(usedIndex);
-  
+  }
 
-  useEffect(() => {
-    console.log(userAnswer);
-    console.log(currentAnswer);
-  }, [userAnswer, currentAnswer]);
+  const onPlayAgain = () => {
+
+  }
+
+  console.log(correctAnswersCounter);
+  console.log(index);
+  console.log(usedIndex);
 
   return (
     <>
@@ -140,9 +140,15 @@ function App() {
           </form>
           <button onClick={onConfirmAnswer}>Confirm</button>
           <p>{answerLabelText}</p>
+          {correctAnswersCounter >= 5 && (
+            <>
+              <p>Čestitam, odgovorio si točno na 5 pitanja!!</p> 
+              {/* <p>Potrebno ti je bilo: </p> // time */}
+              <button onClick={onPlayAgain}>Play again</button>
+            </>
+          )}
         </>
-      )
-      }
+      )}
     </>
   );
 }
