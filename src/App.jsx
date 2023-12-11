@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import "./App.css";
 import Stopwatch from "./components/stopwatch/Stopwatch";
 import { questionsAndAnswers } from "./mockData";
@@ -8,67 +8,80 @@ const questionsAnswers = questionsAndAnswers;
 const initialIndex = getNewIndex([]);
 
 function App() {
-  // const generateRandomNumber = Math.floor(Math.random() * 10); ovo ti nece trebati
-
   const [correctAnswersCounter, setCorrectAnswersCounter] = useState(0);
-  const [showQuestions, setShowQuestions] = useState(false); //starta i štopericu
-  const [index, setIndex] = useState(initialIndex);
+  const [startQuiz, setStartQuiz] = useState(false);
   const [usedIndexes, setUsedIndexes] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(
-    questionsAnswers[index].question
+    questionsAnswers[initialIndex].question
   );
   const [currentAnswer, setCurrentAnswer] = useState(
-    questionsAnswers[index].answer
+    questionsAnswers[initialIndex].answer
   );
-
   const [userAnswer, setUserAnswer] = useState("");
   const [answerLabelText, setAnswerLabelText] = useState("");
 
   const onStartQuiz = () => {
-    setShowQuestions(true);
-    console.log(index, currentQuestion, currentAnswer);
-    setUsedIndexes((usedIndexes) => [...usedIndexes, index]);
+    setStartQuiz(true);
+    console.log(
+      "initialIndex:",
+      initialIndex,
+      "current question and answer:",
+      currentQuestion,
+      ",",
+      currentAnswer
+    );
+    setUsedIndexes((usedIndexes) => [...usedIndexes, initialIndex]);
   };
 
-  const onConfirmAnswer = useCallback((event) => {
-    console.log("odgovor", userAnswer);
-    console.log("točan odgovor", currentAnswer);
-    console.log(index);
+  const onConfirmAnswer = useCallback(
+    (event) => {
+      console.log("userAnswer:", userAnswer);
+      console.log("currentAnswer", currentAnswer);
 
-    if (userAnswer == currentAnswer) {
-      setAnswerLabelText("Odgovor je točan!");
-      // ovdje ce postojati const varijabla koja ce zaprimiti povratnu vrijednost funkcije setNewIndex, koju trebas pozvati ovdje
-      // te ce se ova varijabla koristiti u setUsedIndex i prilikom postavljanja sljedeceg pitanja
-      // razlog zasto je ovo bolje rjesenje je to sto ta varijabla ni u kojem trenutku ne treba biti vidljiva svim funkcijama te ju mozes
-      // zadrzati lokalnom
-      const newIndex = getNewIndex(usedIndexes);
-      setCurrentQuestion(questionsAnswers[newIndex].question);
-      setCurrentAnswer(questionsAnswers[newIndex].answer);
-      setUsedIndexes((usedIndexes) => [...usedIndexes, newIndex]);
+      if (userAnswer == currentAnswer) {
+        setAnswerLabelText("Odgovor je točan!");
+        
+        const newIndex = getNewIndex(usedIndexes);
+        setCurrentQuestion(questionsAnswers[newIndex].question);
+        setCurrentAnswer(questionsAnswers[newIndex].answer);
+        setUsedIndexes((usedIndexes) => [...usedIndexes, newIndex]);
 
-      setCorrectAnswersCounter(correctAnswersCounter + 1);
-    } else {
-      setAnswerLabelText("Odgovor je netočan!Pokušaj ponovo!");
-    }
+        setCorrectAnswersCounter(correctAnswersCounter + 1);
+      } else if (userAnswer.trim().length === 0) {
+        setAnswerLabelText("Odgovor je netočan!Pokušaj ponovo!")
+      } else {
+          setAnswerLabelText("Odgovor je netočan!Pokušaj ponovo!");
+      }
 
-    setUserAnswer("");
-  }, [userAnswer, currentAnswer, usedIndexes, index, correctAnswersCounter]);
+      setUserAnswer("");
+    },
+    [userAnswer, currentAnswer, usedIndexes, correctAnswersCounter]
+  );
 
+  console.log("correct answers counter:", correctAnswersCounter);
+  console.log("usedIndexes array:", usedIndexes);
+ 
   const onPlayAgain = () => {
+    setStartQuiz(true);
+    setCorrectAnswersCounter(0);
+    setUsedIndexes([]);
+    setAnswerLabelText("");
+    setCurrentQuestion(questionsAnswers[initialIndex].question);
+    setCurrentAnswer(questionsAnswers[initialIndex].answer);
+  };
 
-  }
-
-  console.log(correctAnswersCounter);
-  console.log(index);
-  console.log(usedIndexes);
-
-  return (
-    <>
-      <button onClick={onStartQuiz}>Play</button>
-      {showQuestions && (
+  const showQuestionAndResults = useMemo(() => {
+    if (correctAnswersCounter == 5) {
+     return (
         <>
-          <Stopwatch />
-          <h2>Quiz:</h2>
+          <p>Čestitam, odgovorio si točno na 5 pitanja!!</p>
+          <p>Potrebno ti je bilo: </p>
+          <button onClick={onPlayAgain}>Play again</button>
+        </>
+      );
+    } else {
+      return (
+        <>
           <p>Izračunaj zbroj ova dva broja: {currentQuestion}</p>
           <form>
             <label htmlFor="fname">Your answer:</label>
@@ -83,14 +96,20 @@ function App() {
           </form>
           <button onClick={onConfirmAnswer}>Confirm</button>
           <p>{answerLabelText}</p>
-          {correctAnswersCounter == 5 && (
-            <>
-              <p>Čestitam, odgovorio si točno na 5 pitanja!!</p> 
-              {/* <p>Potrebno ti je bilo: </p> // time */}
-              <button onClick={onPlayAgain}>Play again</button>
-            </>
-            // izdvoji sto je u () i stavi u useMemo
-          )}
+          <p>Broj točnih odgovora: {correctAnswersCounter}</p>
+        </>
+      );
+    }
+  }, [correctAnswersCounter, userAnswer]);
+
+  return (
+    <>
+      {!startQuiz && <button onClick={onStartQuiz}>Play</button>}
+      {startQuiz && (
+        <>
+          <Stopwatch />
+          <h2>Quiz:</h2>
+          {showQuestionAndResults}
         </>
       )}
     </>
@@ -98,5 +117,3 @@ function App() {
 }
 
 export default App;
-
-
