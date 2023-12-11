@@ -1,18 +1,19 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import "./App.css";
 import Stopwatch from "./components/stopwatch/Stopwatch";
 import { questionsAndAnswers } from "./mockData";
-// import { } from "./testIndex";
+import { getNewIndex } from "./utils";
 
 const questionsAnswers = questionsAndAnswers;
+const initialIndex = getNewIndex([]);
 
 function App() {
   // const generateRandomNumber = Math.floor(Math.random() * 10); ovo ti nece trebati
 
   const [correctAnswersCounter, setCorrectAnswersCounter] = useState(0);
   const [showQuestions, setShowQuestions] = useState(false); //starta i štopericu
-  const [index, setIndex] = useState(generateRandomNumber);
-  const [usedIndex, setUsedIndex] = useState([]);
+  const [index, setIndex] = useState(initialIndex);
+  const [usedIndexes, setUsedIndexes] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(
     questionsAnswers[index].question
   );
@@ -23,25 +24,10 @@ function App() {
   const [userAnswer, setUserAnswer] = useState("");
   const [answerLabelText, setAnswerLabelText] = useState("");
 
-  // useEffect(() => {
-  //   console.log("here")
-  //   console.log("useEffect, index", index);
-  //   console.log("useEffect, currentQuestion", currentQuestion);
-  //   console.log(currentAnswer);
-  //   setCurrentQuestion(questionsAnswers[index].question);
-  //   setCurrentAnswer(questionsAnswers[index].answer);
-
-  //   for (let i = 0; i < usedIndex.length; i++) {
-  //     if (index === usedIndex[i]) {
-  //       setIndex(generateRandomNumber);
-  //       break;
-  //     }
-  //   }
-  // }, [currentQuestion, index, usedIndex]);
-
   const onStartQuiz = () => {
     setShowQuestions(true);
     console.log(index, currentQuestion, currentAnswer);
+    setUsedIndexes((usedIndexes) => [...usedIndexes, index]);
   };
 
   const onConfirmAnswer = useCallback((event) => {
@@ -55,9 +41,10 @@ function App() {
       // te ce se ova varijabla koristiti u setUsedIndex i prilikom postavljanja sljedeceg pitanja
       // razlog zasto je ovo bolje rjesenje je to sto ta varijabla ni u kojem trenutku ne treba biti vidljiva svim funkcijama te ju mozes
       // zadrzati lokalnom
-      
-
-      setUsedIndex((usedIndex) => [...usedIndex, index]);
+      const newIndex = getNewIndex(usedIndexes);
+      setCurrentQuestion(questionsAnswers[newIndex].question);
+      setCurrentAnswer(questionsAnswers[newIndex].answer);
+      setUsedIndexes((usedIndexes) => [...usedIndexes, newIndex]);
 
       setCorrectAnswersCounter(correctAnswersCounter + 1);
     } else {
@@ -65,7 +52,7 @@ function App() {
     }
 
     setUserAnswer("");
-  }, [userAnswer, currentAnswer, usedIndex, index, correctAnswersCounter]);
+  }, [userAnswer, currentAnswer, usedIndexes, index, correctAnswersCounter]);
 
   const onPlayAgain = () => {
 
@@ -73,7 +60,7 @@ function App() {
 
   console.log(correctAnswersCounter);
   console.log(index);
-  console.log(usedIndex);
+  console.log(usedIndexes);
 
   return (
     <>
@@ -83,18 +70,6 @@ function App() {
           <Stopwatch />
           <h2>Quiz:</h2>
           <p>Izračunaj zbroj ova dva broja: {currentQuestion}</p>
-
-          {/* ispis kompletnog niza */}
-          {/* {questionsAnswers.map((questionAnswer,index) => {
-        return (
-          <div key={index}>
-            <p>{questionAnswer.question} "= ?"</p>
-            <p>{questionAnswer.answer}</p>
-          </div>
-        )
-      }  
-      )}  */}
-
           <form>
             <label htmlFor="fname">Your answer:</label>
             <input
@@ -108,7 +83,7 @@ function App() {
           </form>
           <button onClick={onConfirmAnswer}>Confirm</button>
           <p>{answerLabelText}</p>
-          {correctAnswersCounter >= 5 && (
+          {correctAnswersCounter == 5 && (
             <>
               <p>Čestitam, odgovorio si točno na 5 pitanja!!</p> 
               {/* <p>Potrebno ti je bilo: </p> // time */}
