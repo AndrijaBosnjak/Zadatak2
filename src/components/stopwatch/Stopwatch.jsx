@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./stopwatch.css";
 
-const Stopwatch = () => {
+const Stopwatch = ({isRunning}) => {
   // state to store time
   const [time, setTime] = useState(0);
 
   // state to check stopwatch running or not
-  const [isRunning, setIsRunning] = useState(true);
+  // const [isRunning, setIsRunning] = useState(true);
 
   useEffect(() => {
     let intervalId;
@@ -22,9 +22,9 @@ const Stopwatch = () => {
   const milliseconds = time % 100;
 
   // Method to start and stop timer
-  const startAndStop = () => {
-    setIsRunning(!isRunning);
-  };
+  //  const startAndStop = () => {
+  //  setIsRunning(!isRunning);
+  //  };
 
   // Method to reset timer back to 0
   const reset = () => {

@@ -7,6 +7,7 @@ import { getNewIndex } from "./utils";
 const questionsAnswers = questionsAndAnswers;
 const initialIndex = getNewIndex([]);
 
+
 function App() {
   const [correctAnswersCounter, setCorrectAnswersCounter] = useState(0);
   const [startQuiz, setStartQuiz] = useState(false);
@@ -20,8 +21,11 @@ function App() {
   const [userAnswer, setUserAnswer] = useState("");
   const [answerLabelText, setAnswerLabelText] = useState("");
 
-  const onStartQuiz = () => {
+  const [isRunning, setIsRunning] = useState(false);  
+
+    const onStartQuiz = () => {
     setStartQuiz(true);
+    setIsRunning(true)
     console.log(
       "initialIndex:",
       initialIndex,
@@ -45,8 +49,8 @@ function App() {
         setCurrentQuestion(questionsAnswers[newIndex].question);
         setCurrentAnswer(questionsAnswers[newIndex].answer);
         setUsedIndexes((usedIndexes) => [...usedIndexes, newIndex]);
-
         setCorrectAnswersCounter(correctAnswersCounter + 1);
+        
       } else if (userAnswer.trim().length === 0) {
         setAnswerLabelText("Odgovor je netočan!Pokušaj ponovo!")
       } else {
@@ -72,6 +76,7 @@ function App() {
 
   const showQuestionAndResults = useMemo(() => {
     if (correctAnswersCounter == 5) {
+     setIsRunning(false); 
      return (
         <>
           <p>Čestitam, odgovorio si točno na 5 pitanja!!</p>
@@ -107,7 +112,7 @@ function App() {
       {!startQuiz && <button onClick={onStartQuiz}>Play</button>}
       {startQuiz && (
         <>
-          <Stopwatch />
+          <Stopwatch isRunning = {isRunning}/>
           <h2>Quiz:</h2>
           {showQuestionAndResults}
         </>
