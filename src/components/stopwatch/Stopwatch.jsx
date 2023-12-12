@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./stopwatch.css";
 
-const Stopwatch = ({isRunning}) => {
+const Stopwatch = ({isRunning, time, setTime}) => {
   // state to store time
-  const [time, setTime] = useState(0);
+  //const [time, setTime] = useState(0);
 
   // state to check stopwatch running or not
   // const [isRunning, setIsRunning] = useState(true);
@@ -21,15 +21,17 @@ const Stopwatch = ({isRunning}) => {
   const seconds = Math.floor((time % 6000) / 100);
   const milliseconds = time % 100;
 
+ 
+
   // Method to start and stop timer
   //  const startAndStop = () => {
   //  setIsRunning(!isRunning);
   //  };
 
   // Method to reset timer back to 0
-  const reset = () => {
-    setTime(0);
-  };
+  //const reset = () => {
+  //  setTime(0);
+  //};
   return (
     <div className="stopwatch-container">
       <p className="stopwatch-time">
