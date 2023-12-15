@@ -3,6 +3,8 @@ import "./App.css";
 import Stopwatch from "./components/stopwatch/Stopwatch";
 import { questionsAndAnswers } from "./mockData";
 import { getNewIndex } from "./utils";
+import { FinishQuiz } from "./FinishQuiz";
+import { StartQuiz } from "./StartQuiz";
 
 const questionsAnswers = questionsAndAnswers;
 const initialIndex = getNewIndex([]);
@@ -41,6 +43,8 @@ function App() {
     (event) => {
       console.log("userAnswer:", userAnswer);
       console.log("currentAnswer", currentAnswer);
+      console.log("correct answers counter:", correctAnswersCounter);
+      console.log("usedIndexes array:", usedIndexes);
 
       if (userAnswer == currentAnswer) {
         setAnswerLabelText("Odgovor je točan!");
@@ -50,19 +54,17 @@ function App() {
         setCurrentAnswer(questionsAnswers[newIndex].answer);
         setUsedIndexes((usedIndexes) => [...usedIndexes, newIndex]);
         setCorrectAnswersCounter(correctAnswersCounter + 1);
-      } else if (userAnswer.trim().length === 0) {
-        setAnswerLabelText("Odgovor je netočan!Pokušaj ponovo!");
       } else {
         setAnswerLabelText("Odgovor je netočan!Pokušaj ponovo!");
       }
 
+      //  if (userAnswer.trim().length === 0) {
+      //   setAnswerLabelText("Odgovor je netočan!Pokušaj ponovo!");
+      //  }
       setUserAnswer("");
     },
     [userAnswer, currentAnswer, usedIndexes, correctAnswersCounter]
   );
-
-  console.log("correct answers counter:", correctAnswersCounter);
-  console.log("usedIndexes array:", usedIndexes);
 
   const onPlayAgain = () => {
     setStartQuiz(true);
@@ -77,43 +79,53 @@ function App() {
   const showQuestionAndResults = useMemo(() => {
     if (correctAnswersCounter == 5) {
       setIsRunning(false);
+
       return (
-        <>
-          <p>Čestitam, odgovorio si točno na 5 pitanja!!</p>
-          <p>
-            Vrijeme potrebno za rješavanje: 
-            {Math.floor(time / 360000)}{" "}:{" "}
-            {Math.floor((time % 360000) / 6000)
-              .toString()
-              .padStart(2, "0")}{" "}
-            :{" "}
-            {Math.floor((time % 6000) / 100)
-              .toString()
-              .padStart(2, "0")}{" "}
-            : {(time % 100).toString().padStart(2, "0")}
-          </p>
-          <button onClick={onPlayAgain}>Play again</button>
-        </>
+        <FinishQuiz onClick={onPlayAgain} time={time} />
+        //   <>
+        //     <p>Čestitam, odgovorio si točno na 5 pitanja!!</p>
+        //     <p>
+        //       Vrijeme potrebno za rješavanje:
+        //       {Math.floor(time / 360000)}{" "}:{" "}
+        //       {Math.floor((time % 360000) / 6000)
+        //         .toString()
+        //         .padStart(2, "0")}{" "}
+        //       :{" "}
+        //       {Math.floor((time % 6000) / 100)
+        //         .toString()
+        //         .padStart(2, "0")}{" "}
+        //       : {(time % 100).toString().padStart(2, "0")}
+        //     </p>
+        //     <button onClick={onPlayAgain}>Play again</button>
+        //   </>
       );
     } else {
       return (
-        <>
-          <p>Izračunaj zbroj ova dva broja: {currentQuestion}</p>
-          <form>
-            <label htmlFor="fname">Your answer: </label>
-            <input
-              type="number"
-              id="answer"
-              name="answer"
-              placeholder="upiši cijeli broj"
-              value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
-            />
-          </form>
-          <button onClick={onConfirmAnswer}>Confirm</button>
-          <p>{answerLabelText}</p>
-          <p>Broj točnih odgovora: {correctAnswersCounter}</p>
-        </>
+        <StartQuiz 
+          onClick={onConfirmAnswer}
+          currentQuestion={currentQuestion}
+          userAnswer={userAnswer}
+          setUserAnswer={setUserAnswer}
+          answerLabelText={answerLabelText}
+          correctAnswersCounter={correctAnswersCounter}
+        />
+        // <>
+        //   <p>Izračunaj zbroj ova dva broja: {currentQuestion}</p>
+        //   <form>
+        //     <label htmlFor="fname">Your answer: </label>
+        //     <input
+        //       type="number"
+        //       id="answer"
+        //       name="answer"
+        //       placeholder="upiši cijeli broj"
+        //       value={userAnswer}
+        //       onChange={(e) => setUserAnswer(e.target.value)}
+        //     />
+        //   </form>
+        //   <button onClick={onConfirmAnswer}>Confirm</button>
+        //   <p>{answerLabelText}</p>
+        //   <p>Broj točnih odgovora: {correctAnswersCounter}</p>
+        // </>
       );
     }
   }, [correctAnswersCounter, userAnswer]);
