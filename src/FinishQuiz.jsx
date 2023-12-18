@@ -1,4 +1,4 @@
-export const FinishQuiz = (time, onPlayAgain) => {
+export const FinishQuiz = ({time, playAgain}) => {
     return (
         <>
           <p>Čestitam, odgovorio si točno na 5 pitanja!!</p>
@@ -14,7 +14,7 @@ export const FinishQuiz = (time, onPlayAgain) => {
               .padStart(2, "0")}{" "}
             : {(time % 100).toString().padStart(2, "0")}
           </p>
-          <button onClick={() => onPlayAgain}>Play again</button>
+          <button onClick={() => playAgain()}>Play again</button>
         </>
       );
 }

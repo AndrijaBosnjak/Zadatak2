@@ -1,5 +1,5 @@
 export const StartQuiz = ({
-  onConfirmAnswer,
+  confirmAnswer,
   currentQuestion,
   userAnswer,
   setUserAnswer,
@@ -20,7 +20,7 @@ export const StartQuiz = ({
           onChange={(e) => setUserAnswer(e.target.value)}
         />
       </form>
-      <button onClick={() => onConfirmAnswer()}>Confirm</button>
+      <button onClick={() => confirmAnswer()}>Confirm</button>
       <p>{answerLabelText}</p>
       <p>Broj točnih odgovora: {correctAnswersCounter}</p>
     </>

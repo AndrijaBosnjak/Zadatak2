@@ -81,51 +81,18 @@ function App() {
       setIsRunning(false);
 
       return (
-        <FinishQuiz onClick={onPlayAgain} time={time} />
-        //   <>
-        //     <p>Čestitam, odgovorio si točno na 5 pitanja!!</p>
-        //     <p>
-        //       Vrijeme potrebno za rješavanje:
-        //       {Math.floor(time / 360000)}{" "}:{" "}
-        //       {Math.floor((time % 360000) / 6000)
-        //         .toString()
-        //         .padStart(2, "0")}{" "}
-        //       :{" "}
-        //       {Math.floor((time % 6000) / 100)
-        //         .toString()
-        //         .padStart(2, "0")}{" "}
-        //       : {(time % 100).toString().padStart(2, "0")}
-        //     </p>
-        //     <button onClick={onPlayAgain}>Play again</button>
-        //   </>
+        <FinishQuiz playAgain={onPlayAgain} time={time} />
       );
     } else {
       return (
         <StartQuiz 
-          onClick={onConfirmAnswer}
+          confirmAnswer={onConfirmAnswer}
           currentQuestion={currentQuestion}
           userAnswer={userAnswer}
           setUserAnswer={setUserAnswer}
           answerLabelText={answerLabelText}
           correctAnswersCounter={correctAnswersCounter}
         />
-        // <>
-        //   <p>Izračunaj zbroj ova dva broja: {currentQuestion}</p>
-        //   <form>
-        //     <label htmlFor="fname">Your answer: </label>
-        //     <input
-        //       type="number"
-        //       id="answer"
-        //       name="answer"
-        //       placeholder="upiši cijeli broj"
-        //       value={userAnswer}
-        //       onChange={(e) => setUserAnswer(e.target.value)}
-        //     />
-        //   </form>
-        //   <button onClick={onConfirmAnswer}>Confirm</button>
-        //   <p>{answerLabelText}</p>
-        //   <p>Broj točnih odgovora: {correctAnswersCounter}</p>
-        // </>
       );
     }
   }, [correctAnswersCounter, userAnswer]);
