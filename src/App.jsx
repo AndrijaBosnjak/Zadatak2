@@ -28,14 +28,6 @@ function App() {
   const onStartQuiz = () => {
     setStartQuiz(true);
     setIsRunning(true);
-    console.log(
-      "initialIndex:",
-      initialIndex,
-      "current question and answer:",
-      currentQuestion,
-      ",",
-      currentAnswer
-    );
     setUsedIndexes((usedIndexes) => [...usedIndexes, initialIndex]);
   };
 
@@ -54,13 +46,12 @@ function App() {
         setCurrentAnswer(questionsAnswers[newIndex].answer);
         setUsedIndexes((usedIndexes) => [...usedIndexes, newIndex]);
         setCorrectAnswersCounter(correctAnswersCounter + 1);
-      } else {
+      } else if (userAnswer.trim().length == 0) {
         setAnswerLabelText("Odgovor je netočan!Pokušaj ponovo!");
+      } else {
+        setAnswerLabelText("Odgovor je netočan!Pokušaj ponovo!")
       }
-
-      //  if (userAnswer.trim().length === 0) {
-      //   setAnswerLabelText("Odgovor je netočan!Pokušaj ponovo!");
-      //  }
+      
       setUserAnswer("");
     },
     [userAnswer, currentAnswer, usedIndexes, correctAnswersCounter]
